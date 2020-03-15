@@ -1,0 +1,19 @@
+[x] AtomicDateTime
+[x] Attempt
+[x] CompositeComparisons
+[x] IComparisons
+[x] IIndexedTime
+[ ] IRun (extensions)
+[x] ISegment
+[ ] ITimerModel
+[x] IndexedTime
+[ ] LiveSplitState
+[ ] Run
+[x] Segment
+[x] SegmentHistory
+[x] Time
+[x] TimeSpan (= py::datetime.timedelta)
+[ ] TimeStamp
+[ ] TimerModel
+[x] TimerPhase 
+[x] TimingMethod

@@ -1,0 +1,7 @@
+import components.currentcomparison
+import components.currentpace
+import components.detailedtimer
+import components.possibletimesave
+import components.previoussegment
+import components.sumofbest
+import components.title
