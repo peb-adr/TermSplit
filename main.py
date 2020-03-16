@@ -3,7 +3,7 @@ import json
 import sys
 
 import components
-import lib.bindings.livesplit_core as lsc
+import lib_ext.bindings.livesplit_core as lsc
 import util
 
 run: lsc.Run
