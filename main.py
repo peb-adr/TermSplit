@@ -1,88 +1,88 @@
 import curses
-import json
 import sys
 
-import components
-import lib_ext.bindings.livesplit_core as lsc
+import pages
 import util
-
-run: lsc.Run
-layout: lsc.Layout
-timer: lsc.Timer
+import input
+from lib_ext.bindings import livesplit_core as lsc
 
 
-def display(stdscr):
-    global run
-    global layout
-    global timer
+class Global:
+    def __init__(self):
+        self.stdscr = None
+        self.run = None
+        self.layout = None
+        self.timer = None
+        self.settings = None
+        self.currentpage = None
 
-    curses.curs_set(0)
-    stdscr.clear()
 
-    state = json.loads(layout.state_as_json(timer))
+g: Global
 
+
+def init_screen(s):
+    # global stdsrc
+    # global g
+
+    g.stdscr = s
+    g.currentpage = pages.timing
+    # pages.layout.render(g)
+    # pages.settings.render(g)
     while True:
-        displaystate(state, stdscr)
-
-    # stdscr.getch()
-
-
-def displaystate(state, stdscr):
-    stdscr.erase()
-    line = 0
-    for c in state['components']:
-        if 'Title' in c:
-            titlestate = c['Title']
-            line = components.title.render(titlestate, stdscr, line)
-        elif 'CurrentComparison' in c:
-            currentcomparisonstate = c['CurrentComparison']
-            line = components.currentcomparison.render(currentcomparisonstate, stdscr, line)
-        elif 'Splits' in c:
-            pass
-        elif 'DetailedTimer' in c:
-            detailedtimerstate = c['DetailedTimer']
-            line = components.detailedtimer.render(detailedtimerstate, stdscr, line)
-        elif 'PossibleTimeSave' in c:
-            possibletimesavestate = c['PossibleTimeSave']
-            line = components.possibletimesave.render(possibletimesavestate, stdscr, line)
-        elif 'PreviousSegment' in c:
-            previoussegmentstate = c['PreviousSegment']
-            line = components.previoussegment.render(previoussegmentstate, stdscr, line)
-        elif 'CurrentPace' in c:
-            currentpacestate = c['CurrentPace']
-            line = components.currentpace.render(currentpacestate, stdscr, line)
-        elif 'SumOfBest' in c:
-            sumofbeststate = c['SumOfBest']
-            line = components.sumofbest.render(sumofbeststate, stdscr, line)
-        elif '' in c:
-            pass
-    stdscr.refresh()
+        g.currentpage.render(g)
 
 
 def setup():
-    global run
-    global layout
-    global timer
+    # global g
+
+    settings = util.readsettings("res/settings.json")
 
     if len(sys.argv) > 1:
-        arun = sys.argv[1]
-    else:
-        arun = "res/BFBB_ngp_gcemu.lss"
-    frun = open(arun, "rb")
+        settings['files']['run'] = sys.argv[1]
+    elif 'run' not in settings['files']:
+        settings['files']['run'] = "res/BFBB_ngp_gcemu.lss"
+    frun = open(settings['files']['run'], "rb")
     prun = lsc.Run.parse(*util.data_len_for_file(frun), "res/splitsout.lss", False)
     if prun.parsed_successfully():
-        run = prun.unwrap()
+        g.run = prun.unwrap()
 
-    timer = lsc.Timer.new(run)
+    g.timer = lsc.Timer.new(g.run)
 
     if len(sys.argv) > 2:
-        alayout = sys.argv[2]
-    else:
-        alayout = "res/myLayout.lsl"
-    flayout = open(alayout, "rb")
-    layout = lsc.Layout.parse_original_livesplit(*util.data_len_for_file(flayout))
+        settings['files']['layout'] = sys.argv[2]
+    elif 'layout' not in settings['files']:
+        settings['files']['layout'] = "res/myLayout.lsl"
+    flayout = open(settings['files']['layout'], "rb")
+    g.layout = lsc.Layout.parse_original_livesplit(*util.data_len_for_file(flayout))
+
+    if 'startsplit' not in settings['hotkeys']:
+        settings['hotkeys']['startsplit'] = 'space'
+    if 'reset' not in settings['hotkeys']:
+        settings['hotkeys']['reset'] = '-'
+    if 'undosplit' not in settings['hotkeys']:
+        settings['hotkeys']['undosplit'] = '0'
+    if 'skipsplit' not in settings['hotkeys']:
+        settings['hotkeys']['skipsplit'] = '+'
+    if 'pause' not in settings['hotkeys']:
+        settings['hotkeys']['pause'] = 'enter'
+    if 'previouscomparison' not in settings['hotkeys']:
+        settings['hotkeys']['previouscomparison'] = '7'
+    if 'nextcomparison' not in settings['hotkeys']:
+        settings['hotkeys']['nextcomparison'] = '9'
+    if 'toggleenable' not in settings['hotkeys']:
+        settings['hotkeys']['toggleenable'] = '/'
+
+    g.settings = settings
+
+
+def main():
+    global g
+    g = Global()
+
+    setup()
+    input.init(g)
+    curses.wrapper(init_screen)
 
 
 if __name__ == '__main__':
-    setup()
-    curses.wrapper(display)
+    main()

@@ -1,5 +1,3 @@
-import cfonts
-import time
 # import sys
 #
 # import lib.bindings.livesplit_core as ls
@@ -31,6 +29,30 @@ import time
 # timer = lsc.Timer.new(run)
 
 
-s = cfonts.render("0.00", font='simple', space=True)
-print(s)
-time.sleep(120)
+# s = cfonts.render("0.00", font='simple', space=True)
+# print(s)
+# time.sleep(120)
+
+import pynput
+
+import time
+import sys
+from pynput import keyboard
+
+
+def on_press(key):
+    t = time.time()
+    try:
+        # Alphanumeric key pressed
+        print('{} {}'.format(t, key.char), flush=True)
+        # print('{} {}'.format(t, key.name), flush=True)
+        print('---', flush=True)
+    except AttributeError:
+        # Special key pressed
+        key_name = str(key)[4:] # Strip "Key."
+        print('{} {}'.format(t, key_name), flush=True)
+
+
+# Collect events until released
+with keyboard.Listener(on_press=on_press) as listener:
+    listener.join()
