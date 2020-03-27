@@ -1,15 +1,11 @@
 import time
-import sys
+
 from pynput import keyboard
 
+import globals as g
 import pages
-import util
-# from main import Global
 
 enabled = True
-# hotkeys = {}
-
-g = None
 
 
 def process_key(k, t):
@@ -39,11 +35,7 @@ def on_press(key):
     process_key(k, time)
 
 
-def init(glob):
-    # global hotkeys
-    # hotkeys = g.settings['hotkeys']
-    global g
-    g = glob
+def init():
     # settings = util.readsettings("res/settings.json")
     # Collect events until released
     # with keyboard.Listener(on_press=on_press) as listener:

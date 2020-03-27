@@ -1,40 +1,25 @@
 import curses
 import sys
 
+import globals as g
+import input
 import pages
 import util
-import input
 from lib_ext.bindings import livesplit_core as lsc
 
 
-class Global:
-    def __init__(self):
-        self.stdscr = None
-        self.run = None
-        self.layout = None
-        self.timer = None
-        self.settings = None
-        self.currentpage = None
-
-
-g: Global
-
-
 def init_screen(s):
-    # global stdsrc
-    # global g
-
+    curses.curs_set(0)
     g.stdscr = s
+    pages.timing.init_colors()
     g.currentpage = pages.timing
-    # pages.layout.render(g)
-    # pages.settings.render(g)
+    # pages.layout.render()
+    # pages.settings.render()
     while True:
-        g.currentpage.render(g)
+        g.currentpage.render()
 
 
 def setup():
-    # global g
-
     settings = util.readsettings("res/settings.json")
 
     if len(sys.argv) > 1:
@@ -76,11 +61,8 @@ def setup():
 
 
 def main():
-    global g
-    g = Global()
-
     setup()
-    input.init(g)
+    input.init()
     curses.wrapper(init_screen)
 
 

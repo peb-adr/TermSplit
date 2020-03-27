@@ -1,14 +1,10 @@
-import json
-
-import components
+import globals as g
 import util
-from main import Global
-
 
 lastkey = ''
 
 
-def render(g: Global):
+def render():
 
     g.stdscr.erase()
     settings = util.readsettings("res/settings.json")
@@ -49,7 +45,6 @@ def render(g: Global):
     line += 1
 
     g.stdscr.refresh()
-    # g.stdscr.getch()
 
 
 def process_key(k, t):
