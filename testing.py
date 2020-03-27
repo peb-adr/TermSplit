@@ -33,10 +33,8 @@
 # print(s)
 # time.sleep(120)
 
-import pynput
-
 import time
-import sys
+
 from pynput import keyboard
 
 
