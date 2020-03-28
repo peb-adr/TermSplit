@@ -1,7 +1,15 @@
+import components.blankspace
 import components.currentcomparison
 import components.currentpace
+import components.delta
 import components.detailedtimer
+import components.graph
 import components.possibletimesave
 import components.previoussegment
+import components.separator
+import components.splits
 import components.sumofbest
+import components.text
+import components.timer
 import components.title
+import components.totalplaytime

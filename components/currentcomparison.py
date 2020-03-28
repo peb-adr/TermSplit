@@ -1,14 +1,19 @@
+import globals as g
 import util
 
 
-def render(currentcomparisonstate, stdscr, line):
-    maxy, maxx = stdscr.getmaxyx()
+def height():
+    return 1
 
-    if 'text' in currentcomparisonstate and 'comparison' in currentcomparisonstate:
-        stdscr.addstr(line, util.leftallignindex(), currentcomparisonstate['text'])
-        stdscr.addstr(line,
-                      util.rightallignindex(len(currentcomparisonstate['comparison']), maxx),
-                      currentcomparisonstate['comparison'])
+
+def render(state, line, maxlines=0):
+    maxy, maxx = g.stdscr.getmaxyx()
+
+    if 'text' in state and 'comparison' in state:
+        g.stdscr.addstr(line, util.leftallignindex(), state['text'])
+        g.stdscr.addstr(line,
+                        util.rightallignindex(len(state['comparison']), maxx),
+                        state['comparison'])
         line += 1
 
     return line

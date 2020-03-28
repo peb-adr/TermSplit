@@ -3,34 +3,37 @@ import util
 from pages import timing
 
 
-def render(detailedtimerstate, stdscr, line):
-    maxy, maxx = stdscr.getmaxyx()
+def height():
+    return 2 + g.settings['bigfonts'][g.settings['bigfont']]['height']
 
-    if 'timer' not in detailedtimerstate:
+
+def render(state, line, maxlines=0):
+    maxy, maxx = g.stdscr.getmaxyx()
+
+    if 'timer' not in state:
         return line
 
-    timer = detailedtimerstate['timer']
+    timer = state['timer']
     stimer = build_timer_str(timer['time'] + timer['fraction'])
-    stdscr.attron(timing.get_color(timer['semantic_color']))
+    g.stdscr.attron(timing.get_color(timer['semantic_color']))
     for p in stimer.split('\n'):
-        # color = g.settings['colors'][tiomer]
-        stdscr.addstr(line, util.rightallignindex(len(p), maxx), p)
+        g.stdscr.addstr(line, util.rightallignindex(len(p), maxx), p)
         line += 1
-    stdscr.attroff(timing.get_color(timer['semantic_color']))
+    g.stdscr.attroff(timing.get_color(timer['semantic_color']))
 
-    if 'segment_timer' in detailedtimerstate:
-        segmenttimer = detailedtimerstate['segment_timer']
+    if 'segment_timer' in state:
+        segmenttimer = state['segment_timer']
         ssegmenttimer = segmenttimer['time'] + segmenttimer['fraction']
-        stdscr.addstr(line, util.rightallignindex(len(ssegmenttimer), maxx - 1), ssegmenttimer)
+        g.stdscr.addstr(line, util.rightallignindex(len(ssegmenttimer), maxx - 1), ssegmenttimer)
         line += 2
 
     bigfontheight = g.settings['bigfonts'][g.settings['bigfont']]['height']
-    if 'comparison1' in detailedtimerstate and detailedtimerstate['comparison1']:
-        s = detailedtimerstate['comparison1']['name'] + ": " + detailedtimerstate['comparison1']['time']
-        stdscr.addstr(line - min(3, bigfontheight), util.leftallignindex(minx=1), s)
-    if 'comparison2' in detailedtimerstate and detailedtimerstate['comparison2']:
-        s = detailedtimerstate['comparison2']['name'] + ": " + detailedtimerstate['comparison2']['time']
-        stdscr.addstr(line - min(2, bigfontheight), util.leftallignindex(minx=1), s)
+    if 'comparison1' in state and state['comparison1']:
+        s = state['comparison1']['name'] + ": " + state['comparison1']['time']
+        g.stdscr.addstr(line - min(3, bigfontheight), util.leftallignindex(minx=1), s)
+    if 'comparison2' in state and state['comparison2']:
+        s = state['comparison2']['name'] + ": " + state['comparison2']['time']
+        g.stdscr.addstr(line - min(2, bigfontheight), util.leftallignindex(minx=1), s)
 
     return line
 

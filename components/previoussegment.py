@@ -1,17 +1,22 @@
+import globals as g
 import util
 from pages import timing
 
 
-def render(previoussegmentstate, stdscr, line):
-    maxy, maxx = stdscr.getmaxyx()
+def height():
+    return 1
 
-    if 'text' in previoussegmentstate and 'time' in previoussegmentstate:
-        stdscr.addstr(line, util.leftallignindex(), previoussegmentstate['text'])
-        stdscr.attron(timing.get_color(previoussegmentstate['semantic_color']))
-        stdscr.addstr(line,
-                      util.rightallignindex(len(previoussegmentstate['time']), maxx),
-                      previoussegmentstate['time'])
-        stdscr.attroff(timing.get_color(previoussegmentstate['semantic_color']))
+
+def render(state, line, maxlines=0):
+    maxy, maxx = g.stdscr.getmaxyx()
+
+    if 'text' in state and 'time' in state:
+        g.stdscr.addstr(line, util.leftallignindex(), state['text'])
+        g.stdscr.attron(timing.get_color(state['semantic_color']))
+        g.stdscr.addstr(line,
+                        util.rightallignindex(len(state['time']), maxx),
+                        state['time'])
+        g.stdscr.attroff(timing.get_color(state['semantic_color']))
         line += 1
 
     return line

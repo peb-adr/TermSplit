@@ -1,4 +1,5 @@
 import curses
+import functools
 import json
 
 import components
@@ -6,56 +7,47 @@ import globals as g
 
 
 def render():
-
     g.stdscr.erase()
     state = json.loads(g.layout.state_as_json(g.timer))
-
     line = 0
-    for c in state['components']:
-        if 'Title' in c:
-            titlestate = c['Title']
-            line = components.title.render(titlestate, g.stdscr, line)
-        elif 'CurrentComparison' in c:
-            currentcomparisonstate = c['CurrentComparison']
-            line = components.currentcomparison.render(currentcomparisonstate, g.stdscr, line)
-        elif 'Splits' in c:
-            pass
-        elif 'DetailedTimer' in c:
-            detailedtimerstate = c['DetailedTimer']
-            line = components.detailedtimer.render(detailedtimerstate, g.stdscr, line)
-        elif 'PossibleTimeSave' in c:
-            possibletimesavestate = c['PossibleTimeSave']
-            line = components.possibletimesave.render(possibletimesavestate, g.stdscr, line)
-        elif 'PreviousSegment' in c:
-            previoussegmentstate = c['PreviousSegment']
-            line = components.previoussegment.render(previoussegmentstate, g.stdscr, line)
-        elif 'CurrentPace' in c:
-            currentpacestate = c['CurrentPace']
-            line = components.currentpace.render(currentpacestate, g.stdscr, line)
-        elif 'SumOfBest' in c:
-            sumofbeststate = c['SumOfBest']
-            line = components.sumofbest.render(sumofbeststate, g.stdscr, line)
-        elif '' in c:
-            pass
 
+    maxy, maxx = g.stdscr.getmaxyx()
+    a = components.detailedtimer.height
+
+    for c in state['components']:
+        if len(c) != 1:
+            continue
+        key = list(c.keys())[0]
+        line = {
+            'BlankSpace': functools.partial(components.blankspace.render, c[key], line),
+            'CurrentComparison': functools.partial(components.currentcomparison.render, c[key], line),
+            'CurrentPace': functools.partial(components.currentpace.render, c[key], line),
+            'Delta': functools.partial(components.delta.render, c[key], line),
+            'DetailedTimer': functools.partial(components.detailedtimer.render, c[key], line),
+            'Graph': functools.partial(components.graph.render, c[key], line),
+            'PossibleTimeSave': functools.partial(components.possibletimesave.render, c[key], line),
+            'PreviousSegment': functools.partial(components.previoussegment.render, c[key], line),
+            'Separator': functools.partial(components.separator.render, c[key], line),
+            'Splits': functools.partial(components.splits.render, c[key], line, 42),
+            'SumOfBest': functools.partial(components.sumofbest.render, c[key], line),
+            'Text': functools.partial(components.text.render, c[key], line),
+            'Timer': functools.partial(components.timer.render, c[key], line),
+            'Title': functools.partial(components.title.render, c[key], line),
+            'TotalPlaytime': functools.partial(components.totalplaytime.render, c[key], line)
+        }[key]()
     g.stdscr.refresh()
 
 
 def process_key(k, t):
-    if k == g.settings['hotkeys']['startsplit']:
-        g.timer.split_or_start()
-    elif k == g.settings['hotkeys']['reset']:
-        g.timer.reset(g.settings['defaults']['saveonreset'])
-    elif k == g.settings['hotkeys']['undosplit']:
-        g.timer.undo_split()
-    elif k == g.settings['hotkeys']['skipsplit']:
-        g.timer.skip_split()
-    elif k == g.settings['hotkeys']['pause']:
-        g.timer.toggle_pause()
-    elif k == g.settings['hotkeys']['previouscomparison']:
-        g.timer.switch_to_previous_comparison()
-    elif k == g.settings['hotkeys']['nextcomparison']:
-        g.timer.switch_to_next_comparison()
+    {
+        g.settings['hotkeys']['startsplit']: functools.partial(g.timer.split_or_start),
+        g.settings['hotkeys']['reset']: functools.partial(g.timer.reset, g.settings['defaults']['saveonreset']),
+        g.settings['hotkeys']['undosplit']: functools.partial(g.timer.undo_split),
+        g.settings['hotkeys']['skipsplit']: functools.partial(g.timer.skip_split),
+        g.settings['hotkeys']['pause']: functools.partial(g.timer.toggle_pause),
+        g.settings['hotkeys']['previouscomparison']: functools.partial(g.timer.switch_to_previous_comparison),
+        g.settings['hotkeys']['nextcomparison']: functools.partial(g.timer.switch_to_next_comparison)
+    }[k]()
 
 
 def init_colors():

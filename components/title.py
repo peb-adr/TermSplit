@@ -1,32 +1,37 @@
+import globals as g
 import util
 
 
-def render(titlestate, stdscr, line):
-    maxy, maxx = stdscr.getmaxyx()
+def height():
+    return 2
 
-    if 'line1' in titlestate:
-        stdscr.addstr(line,
-                      util.centerallignindex(len(titlestate['line1']), maxx)
-                      if titlestate['is_centered']
-                      else util.leftallignindex(),
-                      titlestate['line1'])
+
+def render(state, line, maxlines=0):
+    maxy, maxx = g.stdscr.getmaxyx()
+
+    if 'line1' in state:
+        g.stdscr.addstr(line,
+                        util.centerallignindex(len(state['line1']), maxx)
+                        if state['is_centered']
+                        else util.leftallignindex(),
+                        state['line1'])
         line += 1
-    if 'line2' in titlestate:
-        stdscr.addstr(line,
-                      util.centerallignindex(len(titlestate['line2']), maxx)
-                      if titlestate['is_centered']
-                      else util.leftallignindex(),
-                      titlestate['line2'])
+    if 'line2' in state:
+        g.stdscr.addstr(line,
+                        util.centerallignindex(len(state['line2']), maxx)
+                        if state['is_centered']
+                        else util.leftallignindex(),
+                        state['line2'])
         line += 1
 
     sattempts = ""
-    if 'finished_runs' in titlestate and 'attempts' in titlestate:
-        sattempts = str(titlestate['finished_runs']) + "/" + str(titlestate['attempts'])
+    if 'finished_runs' in state and 'attempts' in state:
+        sattempts = str(state['finished_runs']) + "/" + str(state['attempts'])
     else:
-        if 'finished_runs' in titlestate:
-            sattempts = str(titlestate['finished_runs'])
-        if 'attempts' in titlestate:
-            sattempts = str(titlestate['attempts'])
-    stdscr.addstr(1, util.rightallignindex(len(sattempts), maxx), sattempts)
+        if 'finished_runs' in state:
+            sattempts = str(state['finished_runs'])
+        if 'attempts' in state:
+            sattempts = str(state['attempts'])
+    g.stdscr.addstr(1, util.rightallignindex(len(sattempts), maxx), sattempts)
 
     return line

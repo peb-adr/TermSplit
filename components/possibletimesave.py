@@ -1,14 +1,19 @@
+import globals as g
 import util
 
 
-def render(possibletimesavestate, stdscr, line):
-    maxy, maxx = stdscr.getmaxyx()
+def height():
+    return 1
 
-    if 'text' in possibletimesavestate and 'time' in possibletimesavestate:
-        stdscr.addstr(line, util.leftallignindex(), possibletimesavestate['text'])
-        stdscr.addstr(line,
-                      util.rightallignindex(len(possibletimesavestate['time']), maxx),
-                      possibletimesavestate['time'])
+
+def render(state, line, maxlines=0):
+    maxy, maxx = g.stdscr.getmaxyx()
+
+    if 'text' in state and 'time' in state:
+        g.stdscr.addstr(line, util.leftallignindex(), state['text'])
+        g.stdscr.addstr(line,
+                        util.rightallignindex(len(state['time']), maxx),
+                        state['time'])
         line += 1
 
     return line

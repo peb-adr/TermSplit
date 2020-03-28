@@ -37,6 +37,15 @@ def writesettings(settings, filename):
         f.close()
 
 
+def abort_error(message):
+    prompt = "press ENTER to exit."
+    print(message)
+    print('-' * (max(len(prompt), len(message)) + 1))
+    print(prompt)
+    input()
+    exit()
+
+
 def leftallignindex(textlen=0, maxx=80, minx=0):
     return minx
 
