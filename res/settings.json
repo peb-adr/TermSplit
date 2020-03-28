@@ -41,7 +41,8 @@
 
     "defaults": {
         "fps": 60,
-        "saveonreset": false
+        "saveonreset": false,
+        "splitscolumnwidth": 10
     },
 
     "files": {

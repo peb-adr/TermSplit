@@ -3,11 +3,7 @@ import util
 from pages import timing
 
 
-def height():
-    return 2 + g.settings['bigfonts'][g.settings['bigfont']]['height']
-
-
-def render(state, line, maxlines=0):
+def render(state, line):
     maxy, maxx = g.stdscr.getmaxyx()
 
     if 'timer' not in state:

@@ -2,11 +2,7 @@ import globals as g
 import util
 
 
-def height():
-    return 2
-
-
-def render(state, line, maxlines=0):
+def render(state, line):
     maxy, maxx = g.stdscr.getmaxyx()
 
     if 'line1' in state:

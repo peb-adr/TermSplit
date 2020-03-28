@@ -1,11 +1,9 @@
 import curses
 import sys
-import threading
-from time import time
 
 import globals as g
 import input
-import pages
+import render
 import util
 from lib_ext.bindings import livesplit_core as lsc
 
@@ -62,39 +60,11 @@ def init_settings():
         g.settings['hotkeys']['toggleenable'] = '/'
 
 
-def init_screen(s):
-    curses.curs_set(0)
-    # g.stdscr init
-    g.stdscr = s
-    pages.timing.init_colors()
-    # g.currentpage init
-    g.currentpage = pages.timing
-
-    # begin render thread
-    nextcall = time()
-    # f = open("misc/log", mode='w')
-    # t1 = time()
-
-    def loop_render():
-        nonlocal nextcall
-        # nonlocal t1
-        # nonlocal f
-        g.currentpage.render()
-        # t2 = time()
-        # print(t2 - t1, file=f)
-        # f.flush()
-        # t1 = t2
-        nextcall = nextcall + 1 / g.settings['defaults']['fps']
-        threading.Timer(nextcall - time(), loop_render).start()
-
-    loop_render()
-
-
 def main():
     init_settings()
     init_lcs()
     input.init()
-    curses.wrapper(init_screen)
+    curses.wrapper(render.init)
 
 
 if __name__ == '__main__':
