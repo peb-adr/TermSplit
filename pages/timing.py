@@ -8,14 +8,16 @@ import util
 
 
 def render():
+    state = json.loads(g.layout.state_as_json(g.timer))
+    line = 0
+    count = 0
+
     try:
         g.stdscr.erase()
-        state = json.loads(g.layout.state_as_json(g.timer))
-        line = 0
-
         for c in state['components']:
             if len(c) != 1:
                 continue
+            count += 1
             key = list(c.keys())[0]
             line = {
                 'BlankSpace': functools.partial(components.blankspace.render, c[key], line),
@@ -35,7 +37,8 @@ def render():
                 'TotalPlaytime': functools.partial(components.totalplaytime.render, c[key], line)
             }[key]()
     except curses.error as e:
-        raise curses.error("layout to big for terminal size - adjust one of the two", e.args[0])
+        if count < len(state['components']):
+            raise curses.error("layout to big for terminal size - adjust one of the two", e.args[0])
 
 
 def process_key(k, t):

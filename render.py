@@ -19,11 +19,7 @@ def loop_render():
     try:
         g.currentpage.render()
     except Exception as e:
-        try:
-            g.stdscr.addstr(g.stdscr.getmaxyx()[0] - 2, util.leftallignindex(), "-" * (len(e.args[0]) + 1))
-            g.stdscr.addstr(g.stdscr.getmaxyx()[0] - 1, util.leftallignindex(), e.args[0])
-        except curses.error:
-            pass
+        show_message(e.args[0])
     g.stdscr.refresh()
     # t2 = time()
     # print(t2 - t1, file=f)
@@ -31,6 +27,14 @@ def loop_render():
     # t1 = t2
     nextcall = nextcall + 1 / g.settings['defaults']['fps']
     threading.Timer(nextcall - time(), loop_render).start()
+
+
+def show_message(m):
+    try:
+        g.stdscr.addstr(g.stdscr.getmaxyx()[0] - 2, util.leftallignindex(), "-" * (len(m) + 1) + "+")
+        g.stdscr.addstr(g.stdscr.getmaxyx()[0] - 1, util.leftallignindex(), m + " |")
+    except curses.error:
+        pass
 
 
 def init(s):

@@ -5,7 +5,6 @@ from pynput import keyboard
 import globals as g
 import pages
 
-
 enabled = True
 
 
