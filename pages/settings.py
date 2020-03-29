@@ -2,6 +2,7 @@ import curses
 
 import globals as g
 import util
+import render as r
 
 
 lastkey = ''
@@ -47,7 +48,7 @@ def render():
         g.stdscr.addstr(line, cai, s)
         line += 1
     except curses.error as e:
-        raise curses.error("resize terminal to see whole page", e.args[0])
+        r.add_message("resize terminal to see whole page")
 
 
 def process_key(k, t):

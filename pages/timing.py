@@ -4,7 +4,7 @@ import json
 
 import components
 import globals as g
-import util
+import render as r
 
 
 def render():
@@ -38,7 +38,7 @@ def render():
             }[key]()
     except curses.error as e:
         if count < len(state['components']):
-            raise curses.error("layout to big for terminal size - adjust one of the two", e.args[0])
+            r.add_message("layout to big for terminal size - adjust one of the two")
 
 
 def process_key(k, t):
@@ -53,6 +53,8 @@ def process_key(k, t):
     }
     if k in match:
         match[k]()
+    else:
+        r.add_message("hotkey input enabled")
 
 
 def init_colors():

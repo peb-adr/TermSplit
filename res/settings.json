@@ -42,6 +42,7 @@
     "defaults": {
         "fps": 60,
         "saveonreset": false,
+        "hotkeysdisabledmessage": true,
         "splitscolumnwidth": 8
     },
 
