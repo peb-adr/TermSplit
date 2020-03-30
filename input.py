@@ -12,14 +12,14 @@ modified = False
 
 def process_key(k, t):
     global enabled
-    if k == '/':
+    if k == g.settings['hotkeys']['toggleenable']:
         enabled = not enabled
     if not enabled:
         return
 
-    if k == 'f1':
+    if k == g.settings['hotkeys']['pagetiming']:
         g.currentpage = pages.timing
-    if k == 'f2':
+    if k == g.settings['hotkeys']['pagesettings']:
         g.currentpage = pages.settings
 
     g.currentpage.process_key(k, t)
@@ -29,7 +29,6 @@ def on_press(key):
     global enabled
 
     t = time.time()
-    k = ''
     try:
         # Alphanumeric key pressed
         k = key.char

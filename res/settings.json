@@ -52,14 +52,16 @@
     },
 
     "hotkeys": {
+        "toggleenable": "/",
+        "pagetiming": "f1",
+        "pagesettings": "f2",
         "startsplit": "space",
         "reset": "-",
         "undosplit": "0",
         "skipsplit": "+",
         "pause": "enter",
         "previouscomparison": "7",
-        "nextcomparison": "9",
-        "toggleenable": "/"
+        "nextcomparison": "9"
     },
 
     "semcolors": {
