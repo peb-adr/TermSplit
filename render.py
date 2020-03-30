@@ -24,7 +24,7 @@ def loop_render():
     except Exception as e:
         add_message("error: " + repr(e))
     if not input.enabled and g.settings['defaults']['hotkeysdisabledmessage']:
-        add_message("hotkey input disabled")
+        add_message("hotkey input disabled (toggle with: " + g.settings['hotkeys']['toggleenable'] + " )")
     render_messages()
     g.stdscr.refresh()
     # t2 = time()

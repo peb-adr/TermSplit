@@ -47,8 +47,8 @@
     },
 
     "files": {
-        "run": "res/BFBB_ngp_gcemu.lss",
-        "layout": "res/myLayout.lsl"
+        "run": "res/splits.lss",
+        "layout": "res/layout.json"
     },
 
     "hotkeys": {
