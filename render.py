@@ -22,7 +22,7 @@ def loop_render():
     try:
         g.currentpage.render()
     except Exception as e:
-        add_message("error: " + str(e))
+        add_message("error: " + repr(e))
     if not input.enabled and g.settings['defaults']['hotkeysdisabledmessage']:
         add_message("hotkey input disabled")
     render_messages()
