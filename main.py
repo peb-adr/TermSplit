@@ -16,16 +16,18 @@ def init_lcs():
     except FileNotFoundError:
         util.abort_error("run file " + g.settings['files']['run'] + " does not exist")
     # noinspection PyUnboundLocalVariable
-    prun = lsc.Run.parse(*util.data_len_for_file(frun), "res/splitsout.lss", False)
+    prun = lsc.Run.parse(*util.data_len_for_file(frun), g.settings['files']['runsave'], False)
     if not prun.parsed_successfully():
         util.abort_error("parsing run " + g.settings['files']['run'] + " failed.")
-    g.run = prun.unwrap()
-    if not g.run:
+    run = prun.unwrap()
+    if not run:
         util.abort_error("run intialization failed")
+
     # g.timer init
-    g.timer = lsc.Timer.new(g.run)
-    if not g.run:
+    g.timer = lsc.Timer.new(run)
+    if not g.timer:
         util.abort_error("timer intialization failed")
+
     # g.layout init
     try:
         flayout = open(g.settings['files']['layout'], "rb")
@@ -55,6 +57,9 @@ def init_settings():
             g.settings['files']['run'] = sys.argv[1]
         elif 'run' not in g.settings['files']:
             g.settings['files']['run'] = "res/splits.lss"
+        # empty runsave path? use run path
+        if not g.settings['files']['runsave']:
+            g.settings['files']['runsave'] = g.settings['files']['run']
 
         if len(sys.argv) > 2:
             g.settings['files']['layout'] = sys.argv[2]

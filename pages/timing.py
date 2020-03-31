@@ -5,6 +5,7 @@ import json
 import components
 import globals as g
 import render as r
+import util
 
 
 def render():
@@ -36,25 +37,46 @@ def render():
                 'Title': functools.partial(components.title.render, c[key], line),
                 'TotalPlaytime': functools.partial(components.totalplaytime.render, c[key], line)
             }[key]()
-    except curses.error as e:
+    except curses.error:
         if count < len(state['components']):
             r.add_message("layout to big for terminal size - adjust one of the two")
 
 
 def process_key(k, t):
     match = {
-        g.settings['hotkeys']['startsplit']: functools.partial(g.timer.split_or_start),
-        g.settings['hotkeys']['reset']: functools.partial(g.timer.reset, g.settings['defaults']['saveonreset']),
-        g.settings['hotkeys']['undosplit']: functools.partial(g.timer.undo_split),
-        g.settings['hotkeys']['skipsplit']: functools.partial(g.timer.skip_split),
-        g.settings['hotkeys']['pause']: functools.partial(g.timer.toggle_pause),
-        g.settings['hotkeys']['previouscomparison']: functools.partial(g.timer.switch_to_previous_comparison),
-        g.settings['hotkeys']['nextcomparison']: functools.partial(g.timer.switch_to_next_comparison)
+        g.settings['hotkeys']['startsplit']: g.timer.split_or_start,
+        g.settings['hotkeys']['reset']: timer_reset_warn_save,
+        g.settings['hotkeys']['undosplit']: g.timer.undo_split,
+        g.settings['hotkeys']['skipsplit']: g.timer.skip_split,
+        g.settings['hotkeys']['pause']: g.timer.toggle_pause,
+        g.settings['hotkeys']['previouscomparison']: g.timer.switch_to_previous_comparison,
+        g.settings['hotkeys']['nextcomparison']: g.timer.switch_to_next_comparison,
+        g.settings['hotkeys']['saverun']: save_run
     }
     if k in match:
         match[k]()
+
+
+def timer_reset_warn_save():
+    g.timer.reset(g.settings['defaults']['updateinmemoryrunonreset'])
+    if g.timer.get_run().has_been_modified():
+        r.add_message("inmemory run has changed (save to file with: " + g.settings['hotkeys']['saverun'] + " )", True)
+
+
+def save_run():
+    if g.timer.current_phase() != 0:
+        r.add_message("reset timer to save run", True)
+        return
+
+    # noinspection PyBroadException
+    try:
+        f = open(g.settings['files']['runsave'], "w")
+        f.write(util.pretty_print_xml(g.timer.get_run().save_as_lss()))
+        f.close()
+    except Exception:
+        r.add_message("saving run to " + g.settings['files']['runsave'] + " failed", True)
     else:
-        r.add_message("hotkey input enabled")
+        r.add_message("saved run to " + g.settings['files']['runsave'], True)
 
 
 def init_colors():

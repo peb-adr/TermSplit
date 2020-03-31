@@ -41,17 +41,21 @@
 
     "defaults": {
         "fps": 60,
-        "saveonreset": false,
         "hotkeysdisabledmessage": true,
-        "splitscolumnwidth": 8
+        "splitscolumnwidth": 8,
+        "timedmessageduration": 3,
+        "timedmessagesmax": 8,
+        "updateinmemoryrunonreset": true
     },
 
     "files": {
         "run": "res/splits.lss",
+        "runsave": "res/splitsout.lss",
         "layout": "res/layout.json"
     },
 
     "hotkeys": {
+        "modkey": "alt",
         "toggleenable": "/",
         "pagetiming": "f1",
         "pagesettings": "f2",
@@ -61,7 +65,8 @@
         "skipsplit": "+",
         "pause": "enter",
         "previouscomparison": "7",
-        "nextcomparison": "9"
+        "nextcomparison": "9",
+        "saverun" : "^s"
     },
 
     "semcolors": {

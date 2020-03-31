@@ -1,5 +1,13 @@
 import json
+import sys
 from ctypes import c_byte
+from xml.dom import minidom
+
+sys.stdout = open("misc/log", 'w')
+
+
+def pretty_print_xml(s):
+    return minidom.parseString(s).toprettyxml(indent='  ', encoding='utf-8').decode()
 
 
 def data_len_for_file(file):

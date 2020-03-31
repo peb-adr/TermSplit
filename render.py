@@ -9,14 +9,13 @@ import util
 
 
 nextcall = time()
-# f = None
-# t1 = None
-messages = []
+static_messages = []
+timed_messages = []
+lock = threading.Lock()
 
 
 def loop_render():
     global nextcall
-    # global f
     # global t1
     # errors are caught and displayed as message
     try:
@@ -27,30 +26,30 @@ def loop_render():
         add_message("hotkey input disabled (toggle with: " + g.settings['hotkeys']['toggleenable'] + " )")
     render_messages()
     g.stdscr.refresh()
-    # t2 = time()
-    # print(t2 - t1, file=f)
-    # f.flush()
-    # t1 = t2
     nextcall = nextcall + 1 / g.settings['defaults']['fps']
     threading.Timer(nextcall - time(), loop_render).start()
 
 
-def add_message(m):
-    global messages
-    messages.append(m)
-
-
 def render_messages():
-    global messages
+    global static_messages
+    global timed_messages
     try:
         i = 0
         maxlen = 0
         g.stdscr.attron(curses.color_pair(3))
-        for m in messages:
+        lock.acquire()
+        # determine max length for box outline
+        for messages in [timed_messages, static_messages]:
+            for m in messages:
+                if len(m) > maxlen:
+                    maxlen = len(m)
+        for tm in timed_messages:
             i = i + 1
-            if len(m) > maxlen:
-                maxlen = len(m)
-            g.stdscr.addstr(g.stdscr.getmaxyx()[0] - i, util.leftallignindex(), m)
+            g.stdscr.addstr(g.stdscr.getmaxyx()[0] - i, util.leftallignindex(), tm.ljust(maxlen, ' '))
+        lock.release()
+        for sm in static_messages:
+            i = i + 1
+            g.stdscr.addstr(g.stdscr.getmaxyx()[0] - i, util.leftallignindex(), sm.ljust(maxlen, ' '))
         if i > 0:
             g.stdscr.addstr(g.stdscr.getmaxyx()[0] - i - 1, util.leftallignindex(), "-" * (maxlen + 1) + "+")
             for j in range(1, i + 1):
@@ -59,7 +58,33 @@ def render_messages():
     except curses.error:
         pass
 
-    messages.clear()
+    static_messages.clear()
+
+
+def add_message(m, timed=False):
+    global static_messages
+    global timed_messages
+    if timed:
+        push_timed_message(m)
+        threading.Timer(g.settings['defaults']['timedmessageduration'], pop_timed_message).start()
+    else:
+        static_messages.append(m)
+
+
+def push_timed_message(m):
+    if len(timed_messages) >= g.settings['defaults']['timedmessagesmax']:
+        return
+    lock.acquire()
+    timed_messages.insert(0, m)
+    lock.release()
+
+
+def pop_timed_message():
+    if len(timed_messages) <= 0:
+        return
+    lock.acquire()
+    timed_messages.pop()
+    lock.release()
 
 
 def init(s):
@@ -70,9 +95,5 @@ def init(s):
     # g.currentpage init
     g.currentpage = pages.timing
 
-    # begin render thread
-    # global f
-    # global t1
-    # f = open("misc/log", mode='w')
-    # t1 = time()
+    # start render thread
     loop_render()
