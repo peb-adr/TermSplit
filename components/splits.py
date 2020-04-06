@@ -6,9 +6,25 @@ from pages import timing
 def render(state, line):
     maxy, maxx = g.stdscr.getmaxyx()
 
+    labels = None
+    if 'column_labels' in state:
+        labels = state['column_labels']
+    if labels:
+        for i in range(0, len(labels)):
+            s = labels[i].rjust(g.settings['defaults']['splitscolumnwidth'], " ")
+            index = util.rightallignindex(len(s), maxx - i * g.settings['defaults']['splitscolumnwidth'], maxx // 2)
+            g.stdscr.addstr(line, index, s)
+        line += 1
+
     if 'splits' in state:
         for split in state['splits']:
-            g.stdscr.addstr(line, util.leftallignindex(), split['name'])
+            s = split['name']
+            if split['is_current_split']:
+                s = "-> " + s
+            g.stdscr.addstr(line, util.leftallignindex(), s)
+
+            if state['display_two_rows']:
+                line += 1
 
             columns = []
             columncolors = []

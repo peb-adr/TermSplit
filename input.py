@@ -32,6 +32,8 @@ def on_press(key):
 
     t = time.time()
     k = key_to_char(key)
+    if not k:
+        return
     print(k + " pressed")
     sys.stdout.flush()
 
@@ -56,6 +58,8 @@ def on_press(key):
 def on_release(key):
     global modified
     k = key_to_char(key)
+    if not k:
+        return
     print(k + " released")
     sys.stdout.flush()
     if k == g.settings['hotkeys']['modkey']:
